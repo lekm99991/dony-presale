@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DONY - Cryptocurrency Changing the World Through Donations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #FF6B35;
+            --secondary: #F7931E;
+            --charity: #4ECDC4;
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --dark: #0a0a0a;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            overflow-x: hidden;
+            color: #fff;
+        }
+        .main-container { display: flex; min-height: 100vh; }
+        
+        .dashboard {
+            width: 280px;
+            background: rgba(30, 41, 59, 0.95);
+            border-right: 1px solid rgba(255, 107, 53, 0.2);
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            padding: 30px 20px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .content-area { margin-left: 280px; flex: 1; }
+        
+        .top-nav {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .nav-tabs { display: flex; gap: 30px; }
+        .nav-tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .nav-tab:hover { color: #fff; background: rgba(255, 107, 53, 0.1); }
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.5);
+        }
+        
+        .section-content { display: none; padding: 0; min-height: 100vh; }
+        .section-content.active { display: block; animation: fadeIn 0.8s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 107, 53, 0.8); }
+        }
+        
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+        }
+        
+        .image-gallery {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 40px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .gallery-item:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(255, 107, 53, 0.4);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            object-position: center center;
+            filter: grayscale(30%) contrast(1.2);
+            transition: all 0.5s;
+        }
+        .gallery-item:hover img {
+            filter: grayscale(0%) contrast(1);
+            transform: scale(1.05);
+        }
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+            padding: 60px 40px;
+            color: white;
+        }
+        .gallery-overlay h3 {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .gallery-overlay p {
+            font-size: 18px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0a 100%);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 30px;
+            padding: 50px;
+            max-width: 1200px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-close {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .modal-close:hover { transform: rotate(90deg); background: var(--secondary); }
+        
+        .toast {
+            position: fixed;
+            top: 100px;
+            right: 30px;
+            padding: 25px 35px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+            z-index: 2000;
+            animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1), slideOutRight 0.5s cubic-bezier(0.4, 0, 0.2, 1) 2.5s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 320px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .toast.success { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .toast.error { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .toast.info { background: linear-gradient(135deg, #3498db, #2980b9); }
+        @keyframes slideInRight {
+            from { transform: translateX(500px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(500px); opacity: 0; }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+            font-size: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 53, 0.6);
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            padding: 15px 35px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 50px 0;
+        }
+        .category-card {
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 20px;
+            padding: 35px;
+            transition: all 0.4s;
+        }
+        .category-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.3);
+            transform: translateY(-5px);
+        }
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+        }
+        .category-icon { font-size: 52px; }
+        .subcategory-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .subcategory-item {
+            padding: 15px 18px;
+            background: rgba(78, 205, 196, 0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 2px solid transparent;
+        }
+        .subcategory-item:hover {
+            background: rgba(78, 205, 196, 0.15);
+            transform: translateX(8px);
+        }
+        .subcategory-item.selected {
+            background: rgba(78, 205, 196, 0.25);
+            border-color: var(--charity);
+        }
+        .custom-radio {
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .custom-radio.selected {
+            border-color: var(--charity);
+            background: var(--charity);
+        }
+        .custom-radio.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .rank-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            min-width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+        .percentage-badge {
+            background: linear-gradient(135deg, var(--charity), #45b7aa);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 15px;
+            font-size: 15px;
+            font-weight: 700;
+            margin-left: auto;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .input-group input {
+            width: 100%;
+            padding: 18px;
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: rgba(26, 26, 46, 0.5);
+            color: white;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2);
+        }
+        
+        .season-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin: 50px 0;
+        }
+        .season-card {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(255, 107, 53, 0.2);
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            transition: all 0.4s;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            .season-card:hover {
+                border-color: var(--primary);
+                transform: translateY(-8px);
+                box-shadow: 0 20px 50px rgba(255, 107, 53, 0.4);
+            }
+        }
+        .season-card:active {
+            border-color: var(--primary);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(255, 107, 53, 0.4);
+        }
+        .season-card.active {
+            border-color: var(--charity);
+            background: rgba(78, 205, 196, 0.1);
+            animation: glow 2s infinite;
+        }
+        .season-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 40px 0;
+        }
+        .wallet-option {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(255, 107, 53, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s;
+        }
+        .wallet-option:hover {
+            border-color: var(--primary);
+            transform: scale(1.08);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.5);
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 30%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 25px 12px;
+            border-radius: 0 15px 15px 0;
+            cursor: pointer;
+            z-index: 150;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 1px;
+            box-shadow: 3px 0 15px rgba(255, 107, 53, 0.5);
+            transition: all 0.3s;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        .mobile-menu-toggle:hover {
+            padding-left: 17px;
+            box-shadow: 5px 0 20px rgba(255, 107, 53, 0.7);
+        }
+        .dashboard.mobile-open {
+            transform: translateX(0);
+        }
+        
+        @media (max-width: 1024px) {
+            .season-grid { grid-template-columns: repeat(2, 1fr); }
+            .wallet-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            body { font-size: 14px; }
+            h1 { font-size: 28px !important; }
+            h2 { font-size: 22px !important; }
+            h3 { font-size: 18px !important; }
+            p { font-size: 14px !important; }
+            
+            .dashboard { 
+                width: 280px; 
+                position: fixed; 
+                height: auto;
+                max-height: none;
+                border-right: 1px solid rgba(255, 107, 53, 0.2); 
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                overflow-y: visible;
+                padding: 15px 12px 20px 12px;
+            }
+            .dashboard > div:first-child {
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+            }
+            .dashboard > div:first-child h1 {
+                font-size: 24px !important;
+            }
+            .dashboard > div:first-child p {
+                font-size: 11px !important;
+            }
+            .dashboard > div:nth-child(2) h3 {
+                font-size: 12px !important;
+                margin-bottom: 10px !important;
+            }
+            .dashboard > div:nth-child(2) > div > div {
+                padding: 12px !important;
+            }
+            .dashboard > div:nth-child(2) > div > div > div:first-child {
+                font-size: 20px !important;
+            }
+            .dashboard > div:nth-child(2) > div > div > div:nth-child(2) {
+                font-size: 10px !important;
+            }
+            .dashboard > div:not(:first-child):not(:nth-child(2)) {
+                padding: 15px !important;
+                margin-bottom: 12px !important;
+            }
+            .dashboard > div:not(:first-child):not(:nth-child(2)) > div:first-child {
+                font-size: 10px !important;
+            }
+            .dashboard > div:not(:first-child):not(:nth-child(2)) > div:nth-child(2) {
+                font-size: 18px !important;
+            }
+            
+            .mobile-menu-toggle { 
+                display: block;
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+            .content-area { 
+                margin-left: 0;
+                padding: 15px;
+            }
+            
+            nav ul li a {
+                font-size: 14px !important;
+                padding: 10px 15px !important;
+            }
+            
+            section {
+                padding: 40px 20px !important;
+            }
+            
+            .category-grid { 
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .category-grid > div {
+                padding: 15px !important;
+            }
+            .category-grid h4 {
+                font-size: 14px !important;
+            }
+            .category-grid p {
+                font-size: 12px !important;
+            }
+            
+            .season-grid { 
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .season-card {
+                padding: 20px !important;
+            }
+            .season-card h3 {
+                font-size: 18px !important;
+            }
+            .season-card .season-badge {
+                font-size: 11px !important;
+                padding: 5px 12px !important;
+            }
+            
+            .image-gallery { 
+                padding: 0 15px;
+                gap: 30px;
+            }
+            .gallery-item img { 
+                height: 250px;
+            }
+            .gallery-item p {
+                font-size: 13px !important;
+            }
+            
+            button, input {
+                font-size: 14px !important;
+                padding: 12px 20px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuBtn" onclick="toggleMobileMenu()">Dashboard</button>
+    
+    <div class="main-container">
+        <!-- Dashboard -->
+        <aside class="dashboard">
+            <div style="text-align: center; margin-bottom: 35px; padding-bottom: 25px; border-bottom: 1px solid rgba(255, 107, 53, 0.2);">
+                <div style="width: 90px; height: 90px; position: relative; margin: 0 auto 20px;">
+                    <svg width="90" height="90" viewBox="0 0 90 90">
+                        <!-- 외곽 원형 (연두빛 노랑, 얇은 두께) -->
+                        <circle cx="45" cy="45" r="43" fill="none" stroke="#C8D946" stroke-width="3.5"/>
+                        
+                        <!-- 내부 지구 배경 (연두빛 노랑) -->
+                        <circle cx="45" cy="45" r="39" fill="#C8D946"/>
+                        
+                        <!-- 대륙 외곽선 (대시보드 배경색으로 뚫림) -->
+                        <!-- 북미 대륙 -->
+                        <path d="M20,25 Q22,20 26,22 L30,20 Q34,18 36,21 L38,24 Q40,27 42,28 L44,31 Q45,34 43,36 L40,39 Q37,41 34,39 L30,36 Q27,34 24,36 L20,38 Q17,40 15,37 L13,33 Q12,29 14,26 Z" 
+                              fill="rgba(20, 20, 30, 0.95)" stroke="none"/>
+                        
+                        <!-- 유럽/아프리카 -->
+                        <path d="M48,20 Q51,18 54,20 L57,23 Q60,26 58,30 L55,34 Q52,37 49,35 L46,32 Q44,28 46,25 Z" 
+                              fill="rgba(20, 20, 30, 0.95)" stroke="none"/>
+                        
+                        <!-- 남미 -->
+                        <path d="M28,48 Q32,45 36,47 L40,50 Q44,53 42,58 L37,63 Q32,66 27,63 L23,58 Q21,53 23,50 Z" 
+                              fill="rgba(20, 20, 30, 0.95)" stroke="none"/>
+                        
+                        <!-- 아시아 -->
+                        <path d="M52,42 Q58,40 62,43 L66,47 Q70,52 67,57 L62,61 Q57,64 52,61 L48,57 Q46,52 48,48 Z" 
+                              fill="rgba(20, 20, 30, 0.95)" stroke="none"/>
+                        
+                        <!-- 호주 -->
+                        <path d="M60,65 Q64,63 67,65 L70,69 Q72,73 69,76 L65,78 Q61,79 58,76 L56,72 Q55,68 57,66 Z" 
+                              fill="rgba(20, 20, 30, 0.95)" stroke="none"/>
+                    </svg>
+                </div>
+                <h1 style="font-size: 36px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">DONY</h1>
+                <p style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 8px; line-height: 1.6; text-align: center;">
+                    the first Donation Crypto Ecosystem<br>
+                    <span style="font-size: 13px; font-weight: 600;">&</span><br>
+                    Valuable Investment
+                </p>
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <h3 style="font-size: 15px; margin-bottom: 15px; text-align: center; font-weight: 700; color: rgba(255,255,255,0.9);">⏰ Season Ends In</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                    <div style="background: rgba(26, 26, 46, 0.8); border: 1px solid rgba(255, 107, 53, 0.3); padding: 18px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 30px; font-weight: 700; color: var(--primary);" id="days">15</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Days</div>
+                    </div>
+                    <div style="background: rgba(26, 26, 46, 0.8); border: 1px solid rgba(255, 107, 53, 0.3); padding: 18px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 30px; font-weight: 700; color: var(--primary);" id="hours">07</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Hours</div>
+                    </div>
+                    <div style="background: rgba(26, 26, 46, 0.8); border: 1px solid rgba(255, 107, 53, 0.3); padding: 18px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 30px; font-weight: 700; color: var(--primary);" id="minutes">32</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Mins</div>
+                    </div>
+                    <div style="background: rgba(26, 26, 46, 0.8); border: 1px solid rgba(255, 107, 53, 0.3); padding: 18px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 30px; font-weight: 700; color: var(--primary);" id="seconds">45</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Secs</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(255, 107, 53, 0.25), rgba(247, 147, 30, 0.25)); border: 1px solid rgba(255, 107, 53, 0.4); padding: 22px; border-radius: 15px; margin-bottom: 18px;">
+                <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; font-weight: 600; text-align: left;">Total Raised</div>
+                <div style="font-size: 26px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: left;" id="totalRaised">$0</div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(78, 205, 196, 0.25), rgba(69, 183, 170, 0.25)); border: 1px solid rgba(78, 205, 196, 0.4); padding: 22px; border-radius: 15px; margin-bottom: 18px;">
+                <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; font-weight: 600; text-align: left;">Total Donated</div>
+                <div style="font-size: 26px; font-weight: 700; color: var(--charity); text-align: left;" id="totalDonated">$0</div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.25), rgba(192, 57, 43, 0.25)); border: 1px solid rgba(231, 76, 60, 0.4); padding: 22px; border-radius: 15px; margin-bottom: 18px;">
+                <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; font-weight: 600; text-align: left;">Total Burned</div>
+                <div style="font-size: 26px; font-weight: 700; color: #e74c3c; text-align: left;" id="totalBurned">0 DONY</div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.25), rgba(41, 128, 185, 0.25)); border: 1px solid rgba(52, 152, 219, 0.4); padding: 22px; border-radius: 15px;">
+                <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; font-weight: 600; text-align: left;">Progress</div>
+                <div style="font-size: 26px; font-weight: 700; color: #3498db; margin-bottom: 12px; text-align: left;" id="progressPercent">0%</div>
+                <div style="height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;">
+                    <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3498db, #2980b9); border-radius: 5px; box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="content-area">
+            <nav class="top-nav">
+                <div class="nav-tabs">
+                    <div class="nav-tab active" onclick="showSection('about')">About DONY</div>
+                    <div class="nav-tab" onclick="showSection('vision')">Vision</div>
+                    <div class="nav-tab" onclick="showSection('donation')">Donation</div>
+                    <div class="nav-tab" onclick="showSection('presale')">Presale</div>
+                </div>
+                <button style="background: linear-gradient(135deg, var(--charity), #45b7aa); color: white; padding: 12px 24px; border-radius: 25px; border: none; cursor: pointer; font-weight: 600; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4); font-family: 'Outfit', sans-serif;" id="musicToggle" onclick="toggleMusic()">🎵 Play DONY Main Theme Song</button>
+            </nav>
+
+            <!-- About DONY Section -->
+            <section id="section-about" class="section-content active">
+                <div class="hero-section">
+                    <div style="text-align: center; z-index: 1; max-width: 1000px; padding: 0 40px;">
+                        <div style="display: inline-block; animation: float 4s ease-in-out infinite;">
+                            <div style="width: 220px; height: 220px; background: linear-gradient(135deg, #FF6B35, #4ECDC4); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 110px; box-shadow: 0 30px 80px rgba(255, 107, 53, 0.6); margin: 0 auto;">🌍💙</div>
+                        </div>
+                        <h1 style="font-size: 64px; font-weight: 800; margin: 40px 0 25px; background: linear-gradient(135deg, #fff, rgba(255,255,255,0.7)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2;">We Must Save the Earth</h1>
+                        <p style="font-size: 24px; color: rgba(255,255,255,0.8); line-height: 1.8; margin-bottom: 30px;">It's late, but we must start now.<br>Tomorrow might be too late.</p>
+                    </div>
+                </div>
+
+                <div class="image-gallery" style="margin-top: 30px;">
+                    <div class="gallery-item">
+                        <img src="4ec0e35e869240e7cba3be723b0316cb.jpg" alt="Polar Bears" onerror="this.src='https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=1200&h=600&fit=crop'">
+                        <div class="gallery-overlay">
+                            <h3>Endangered Species Are Disappearing</h3>
+                            <p>100 species go extinct every single day. If we don't act now, the next generation will never see these beautiful creatures.</p>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item">
+                        <img src="c56799258212e00f0f3f7ba708128152.jpg" alt="Starving Children" onerror="this.src='https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200&h=600&fit=crop'">
+                        <div class="gallery-overlay">
+                            <h3>800 Million People Are Starving</h3>
+                            <p>Every 5 seconds, a child dies from hunger. We have food it can be give. What we need is action and compassion.</p>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1621451537084-482c73073a0f?w=1200&h=600&fit=crop" alt="Ocean Pollution">
+                        <div class="gallery-overlay">
+                            <h3>Our Oceans Are Drowning in Plastic</h3>
+                            <p>By 2050, there will be more plastic than fish in the ocean. Our convenience is threatening the planet's life.</p>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item">
+                        <img src="3d1439922f0e552d8afacccc1cc8aa51.jpg" alt="War Victims" onerror="this.src='https://images.unsplash.com/photo-1547447134-cd3f5c716030?w=1200&h=600&fit=crop'">
+                        <div class="gallery-overlay">
+                            <h3>War Victims Need Our Help</h3>
+                            <p>Over 100 million people desperately need humanitarian aid. Children in conflict zones live in fear every single day.</p>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item">
+                        <img src="8e036066743afb3ac9ed9ed8147d203e.jpg" alt="Hope" onerror="this.src='https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1200&h=600&fit=crop'">
+                        <div class="gallery-overlay">
+                            <h3>But Together, We Can Make a Difference</h3>
+                            <p>Your small action can change the world. Join DONY to create real change. This might be our last chance.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="max-width: 1000px; margin: 80px auto; padding: 60px 40px; background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(78, 205, 196, 0.1)); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 30px; text-align: center;">
+                    <h2 style="font-size: 42px; font-weight: 800; margin-bottom: 25px; color: #fff;">Time Is Running Out</h2>
+                    <p style="font-size: 20px; color: rgba(255,255,255,0.85); line-height: 2; max-width: 800px; margin: 0 auto;">
+                        DONY is not just a cryptocurrency.<br>
+                        <strong style="color: var(--charity);">30%</strong> of every purchase automatically goes to charity,<br>
+                        and <strong style="color: var(--primary);">10%</strong> is auto-burned to protect value.
+                    </p>
+                    <p style="font-size: 24px; color: var(--primary); margin-top: 30px; font-weight: 700;">Act now. Tomorrow might be too late.</p>
+                </div>
+            </section>
+
+            <!-- Vision Section -->
+            <section id="section-vision" class="section-content">
+                <div style="max-width: 1200px; margin: 0 auto; padding: 80px 40px; text-align: center;">
+                    <h1 style="font-size: 56px; font-weight: 800; margin-bottom: 40px; color: white;">🎯 Our Vision</h1>
+                    <div style="background: rgba(26, 26, 46, 0.8); border: 1px solid rgba(255, 107, 53, 0.3); padding: 80px; border-radius: 25px;">
+                        <p style="font-size: 26px; color: rgba(255,255,255,0.8); line-height: 2;">Vision content will be added here.<br><br><strong style="color: var(--primary);">Let us know when ready!</strong></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Donation Section -->
+            <section id="section-donation" class="section-content">
+                <div style="max-width: 1400px; margin: 0 auto; padding: 60px 40px;">
+                    <h1 style="font-size: 56px; font-weight: 800; text-align: center; margin-bottom: 25px; color: white;">Donation Activity</h1>
+                    
+                    <div style="text-align: center; margin-bottom: 50px;">
+                        <button onclick="openTransparencyModal()" class="btn-primary" style="display: inline-block; width: auto;">🔍 Verify Donation Transparency</button>
+                        <p style="font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 12px;">Donation activities through DONY are updated weekly</p>
+                    </div>
+
+                    <!-- Donation Method Selection -->
+                    <div style="background: rgba(26, 26, 46, 0.8); border: 1px solid rgba(255, 107, 53, 0.3); padding: 40px; border-radius: 25px; margin-bottom: 50px; text-align: center;">
+                        <h3 style="font-size: 28px; font-weight: 700; margin-bottom: 30px; color: #fff;">Choose Donation Method</h3>
+                        <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+                            <div onclick="setDonationMode('equal')" style="cursor: pointer; padding: 30px 50px; border: 3px solid rgba(255, 107, 53, 0.3); border-radius: 20px; transition: all 0.3s; background: rgba(10, 10, 10, 0.5);" id="mode-equal">
+                                <div class="custom-radio" style="margin: 0 auto 15px;"></div>
+                                <div style="font-weight: 700; font-size: 20px; color: #fff;">Equal Distribution</div>
+                                <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 10px;">Distribute equally to all<br>selected categories</p>
+                            </div>
+                            <div onclick="setDonationMode('ranked')" style="cursor: pointer; padding: 30px 50px; border: 3px solid rgba(255, 107, 53, 0.3); border-radius: 20px; transition: all 0.3s; background: rgba(10, 10, 10, 0.5);" id="mode-ranked">
+                                <div class="custom-radio" style="margin: 0 auto 15px;"></div>
+                                <div style="font-weight: 700; font-size: 20px; color: #fff;">Weighted Priority</div>
+                                <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 10px;">Distribute based on<br>selection order</p>
+                                <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 8px;">First selected = Highest priority</p>
+                            </div>
+                        </div>
+                        <p style="color: rgba(255,255,255,0.5); font-size: 15px; margin-top: 25px;">Unlimited number of selections allowed</p>
+                    </div>
+
+                    <div id="categoriesSection"></div>
+
+                    <!-- Selection Display -->
+                    <div style="background: rgba(26, 26, 46, 0.8); border: 1px solid rgba(255, 107, 53, 0.3); padding: 50px; border-radius: 25px; margin-top: 50px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                            <h3 style="font-size: 32px; font-weight: 700; color: #fff;">
+                                <svg style="width: 28px; height: 28px; display: inline-block; vertical-align: middle; margin-right: 8px;" viewBox="0 0 24 24" fill="none">
+                                    <path d="M3 3v18h18" stroke="#FF6B35" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M7 14l4-4 4 4 6-6" stroke="#4ECDC4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="7" cy="14" r="1.5" fill="#4ECDC4"/>
+                                    <circle cx="11" cy="10" r="1.5" fill="#4ECDC4"/>
+                                    <circle cx="15" cy="14" r="1.5" fill="#4ECDC4"/>
+                                    <circle cx="21" cy="8" r="1.5" fill="#4ECDC4"/>
+                                </svg>
+                                Selected Donation Items
+                            </h3>
+                            <button onclick="resetSelection()" class="btn-secondary" id="resetBtn" style="display: none;">🔄 Reset Selection</button>
+                        </div>
+                        <div id="selectionList" style="min-height: 120px;">
+                            <p style="text-align: center; color: rgba(255,255,255,0.5); font-size: 20px; padding: 40px 0;">Please select donation method and categories</p>
+                        </div>
+                    </div>
+
+                    <!-- Go to Presale Button -->
+                    <div style="text-align: center; margin-top: 60px;">
+                        <button onclick="showSection('presale'); document.querySelectorAll('.nav-tab')[3].click();" class="btn-primary" style="width: auto; padding: 25px 60px; font-size: 20px;">
+                            Go to Presale (Donation) Page
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Presale Section -->
+            <section id="section-presale" class="section-content">
+                <div style="max-width: 1300px; margin: 0 auto; padding: 60px 40px;">
+                    <h1 style="font-size: 56px; font-weight: 800; text-align: center; margin-bottom: 25px; color: white;">DONY Presale</h1>
+                    <p style="text-align: center; font-size: 22px; color: rgba(255,255,255,0.8); margin-bottom: 60px;">Goal: $1,800,000 | Total Supply: 1B DONY | Personal Max: $20,000</p>
+
+                    <div class="season-grid">
+                        <div class="season-card active">
+                            <span class="season-badge">Active Now</span>
+                            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #fff;">Season 1</h3>
+                            <div style="font-size: 16px; color: var(--charity); font-weight: 700; margin-bottom: 20px;">Hope</div>
+                            <div style="font-size: 38px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">$0.0060</div>
+                            <div style="font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 12px;">per DONY</div>
+                            <p style="font-size: 14px; color: rgba(255,255,255,0.6);">75M DONY</p>
+                        </div>
+                        <div class="season-card">
+                            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #fff;">Season 2</h3>
+                            <div style="font-size: 16px; color: var(--primary); font-weight: 700; margin-bottom: 20px;">Courage</div>
+                            <div style="font-size: 38px; font-weight: 700; color: #fff; margin-bottom: 12px;">$0.0069</div>
+                            <p style="font-size: 14px; color: rgba(255,255,255,0.6);">75M DONY</p>
+                            <div style="background: #2ecc71; color: white; padding: 6px 16px; border-radius: 15px; font-size: 13px; display: inline-block; margin-top: 15px; font-weight: 700;">+15% Up</div>
+                        </div>
+                        <div class="season-card">
+                            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #fff;">Season 3</h3>
+                            <div style="font-size: 16px; color: var(--secondary); font-weight: 700; margin-bottom: 20px;">Challenge</div>
+                            <div style="font-size: 38px; font-weight: 700; color: #fff; margin-bottom: 12px;">$0.0079</div>
+                            <p style="font-size: 14px; color: rgba(255,255,255,0.6);">75M DONY</p>
+                            <div style="background: #2ecc71; color: white; padding: 6px 16px; border-radius: 15px; font-size: 13px; display: inline-block; margin-top: 15px; font-weight: 700;">+15% Up</div>
+                        </div>
+                        <div class="season-card">
+                            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #fff;">Season 4</h3>
+                            <div style="font-size: 16px; color: #e74c3c; font-weight: 700; margin-bottom: 20px;">Wave</div>
+                            <div style="font-size: 38px; font-weight: 700; color: #fff; margin-bottom: 12px;">$0.0091</div>
+                            <p style="font-size: 14px; color: rgba(255,255,255,0.6);">75M DONY</p>
+                            <div style="background: #2ecc71; color: white; padding: 6px 16px; border-radius: 15px; font-size: 13px; display: inline-block; margin-top: 15px; font-weight: 700;">+15% Up</div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(26, 26, 46, 0.8); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 25px; padding: 50px; margin-top: 50px;">
+                        <h3 style="font-size: 32px; font-weight: 700; margin-bottom: 40px; text-align: center; color: #fff;">
+                            <svg style="width: 32px; height: 32px; display: inline-block; vertical-align: middle; margin-right: 10px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="#4ECDC4" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Purchase DONY
+                        </h3>
+                        
+                        <div class="input-group">
+                            <label>Purchase Amount (USDT)</label>
+                            <input type="number" id="buyAmount" placeholder="e.g., 1000" oninput="calculateTokens()">
+                        </div>
+
+                        <div style="background: rgba(78, 205, 196, 0.15); border: 1px solid rgba(78, 205, 196, 0.3); padding: 30px; border-radius: 20px; margin-bottom: 30px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 18px;">
+                                <span style="color: rgba(255,255,255,0.8);">Tokens Received</span>
+                                <strong id="tokenAmount" style="font-size: 24px; color: var(--charity);">0 DONY</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 18px;">
+                                <span style="color: rgba(255,255,255,0.8);">Current Price</span>
+                                <strong style="color: #fff;">$0.0060</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; color: #2ecc71; margin-bottom: 18px; font-size: 18px;">
+                                <span>❤️ Charity Donation (30%)</span>
+                                <strong id="charityAmount">$0</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; color: #e74c3c; font-size: 18px;">
+                                <span>🔥 Auto Burn (10%)</span>
+                                <strong id="burnAmount">0 DONY</strong>
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" onclick="connectWallet()" style="width: 100%;">Connect Wallet & Purchase</button>
+                        <p style="text-align: center; font-size: 16px; color: rgba(255,255,255,0.7); margin-top: 20px; font-weight: 600;">* Payment via Tether (TRC-20 USDT). Auto-closes when goal reached</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Wallet Modal -->
+    <div class="modal-overlay" id="walletModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <button class="modal-close" onclick="closeWalletModal()">×</button>
+            <h2 style="font-size: 38px; font-weight: 800; text-align: center; margin-bottom: 40px; color: #fff;">Select Your Wallet</h2>
+            
+            <div class="wallet-grid">
+                <div class="wallet-option" onclick="selectWallet('metamask')">
+                    <div style="font-size: 72px; margin-bottom: 20px;">🦊</div>
+                    <h3 style="font-size: 22px; font-weight: 700; color: #fff;">MetaMask</h3>
+                </div>
+                <div class="wallet-option" onclick="selectWallet('trust')">
+                    <div style="font-size: 72px; margin-bottom: 20px;">💎</div>
+                    <h3 style="font-size: 22px; font-weight: 700; color: #fff;">Trust Wallet</h3>
+                </div>
+                <div class="wallet-option" onclick="selectWallet('walletconnect')">
+                    <div style="font-size: 72px; margin-bottom: 20px;">🔗</div>
+                    <h3 style="font-size: 22px; font-weight: 700; color: #fff;">WalletConnect</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transparency Modal 15개 구호단체 -->
+    <div class="modal-overlay" id="transparencyModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeTransparencyModal()">×</button>
+            <h2 style="font-size: 42px; font-weight: 800; margin-bottom: 40px; text-align: center; color: #fff;">🔍 Donation Transparency Verification</h2>
+            <div style="margin-bottom: 50px;">
+                <h3 style="font-size: 28px; font-weight: 700; margin-bottom: 25px; color: #fff;">📍 Blockchain Addresses by Organization</h3>
+                
+                <!-- Environmental (3개) -->
+                <div style="margin-bottom: 40px;">
+                    <h4 style="font-size: 22px; margin-bottom: 20px; color: var(--charity); font-weight: 700;">🌍 Environmental Conservation</h4>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">WWF (World Wildlife Fund)</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb8</div>
+                        <button onclick="copyAddress('0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb8')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">The Ocean Cleanup</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x8B3192f5eEBD8579568A2Ed41E6FEB402f93f73F</div>
+                        <button onclick="copyAddress('0x8B3192f5eEBD8579568A2Ed41E6FEB402f93f73F')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Rainforest Foundation</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x4Fabb145d64652a948d72533023f6E7A623C7C53</div>
+                        <button onclick="copyAddress('0x4Fabb145d64652a948d72533023f6E7A623C7C53')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                </div>
+
+                <!-- Children (3개) -->
+                <div style="margin-bottom: 40px;">
+                    <h4 style="font-size: 22px; margin-bottom: 20px; color: var(--primary); font-weight: 700;">👶 Children's Relief</h4>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">UNICEF</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x9Ca6a77C8B38159fd2dA9Bd25bc3E259C33F5E39</div>
+                        <button onclick="copyAddress('0x9Ca6a77C8B38159fd2dA9Bd25bc3E259C33F5E39')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Save the Children</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984</div>
+                        <button onclick="copyAddress('0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">World Vision</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x6B175474E89094C44Da98b954EedeAC495271d0F</div>
+                        <button onclick="copyAddress('0x6B175474E89094C44Da98b954EedeAC495271d0F')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                </div>
+
+                <!-- War/Refugees (3개) -->
+                <div style="margin-bottom: 40px;">
+                    <h4 style="font-size: 22px; margin-bottom: 20px; color: #e74c3c; font-weight: 700;">🕊️ War & Refugee Relief</h4>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Red Cross / Red Crescent</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48</div>
+                        <button onclick="copyAddress('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Doctors Without Borders (MSF)</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0xdAC17F958D2ee523a2206206994597C13D831ec7</div>
+                        <button onclick="copyAddress('0xdAC17F958D2ee523a2206206994597C13D831ec7')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">UNHCR (UN Refugee Agency)</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599</div>
+                        <button onclick="copyAddress('0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                </div>
+
+                <!-- Animals (2개) -->
+                <div style="margin-bottom: 40px;">
+                    <h4 style="font-size: 22px; margin-bottom: 20px; color: #f39c12; font-weight: 700;">🐾 Animal Protection</h4>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">IFAW (International Fund for Animal Welfare)</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x514910771AF9Ca656af840dff83E8264EcF986CA</div>
+                        <button onclick="copyAddress('0x514910771AF9Ca656af840dff83E8264EcF986CA')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Sea Shepherd Conservation Society</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE</div>
+                        <button onclick="copyAddress('0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                </div>
+
+                <!-- Medical (2개) -->
+                <div style="margin-bottom: 40px;">
+                    <h4 style="font-size: 22px; margin-bottom: 20px; color: #2ecc71; font-weight: 700;">🏥 Medical Support</h4>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">WHO (World Health Organization)</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9</div>
+                        <button onclick="copyAddress('0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Gavi (The Vaccine Alliance)</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2</div>
+                        <button onclick="copyAddress('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                </div>
+
+                <!-- Education (2개) -->
+                <div style="margin-bottom: 40px;">
+                    <h4 style="font-size: 22px; margin-bottom: 20px; color: #3498db; font-weight: 700;">📚 Education Support</h4>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Room to Read</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x0D8775F648430679A709E98d2b0Cb6250d2887EF</div>
+                        <button onclick="copyAddress('0x0D8775F648430679A709E98d2b0Cb6250d2887EF')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
+                        <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Pencils of Promise</h5>
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 12px; font-family: monospace; word-break: break-all; margin: 12px 0; font-size: 14px;">0x1985365e9f78359a9B6AD760e32412f4a445E862</div>
+                        <button onclick="copyAddress('0x1985365e9f78359a9B6AD760e32412f4a445E862')" style="background: white; color: var(--primary); border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif;">📋 Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="the_earth__Add_Vocal___Cover_.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="https://cdn.ethers.io/lib/ethers-5.6.umd.min.js"></script>
+    <script>
+        // Categories Data
+        const categories = [
+            {
+                id: 'environment',
+                name: 'Environmental Conservation',
+                icon: '🌍',
+                subcategories: [
+                    { id: 'env1', name: 'Climate Change Response & Carbon Neutrality' },
+                    { id: 'env2', name: 'Ocean Plastic Removal Projects' },
+                    { id: 'env3', name: 'Rainforest Protection & Restoration' },
+                    { id: 'env4', name: 'Endangered Ecosystem Conservation' },
+                    { id: 'env5', name: 'Renewable Energy Transition Support' }
+                ]
+            },
+            {
+                id: 'children',
+                name: 'Children\'s Life Relief',
+                icon: '👶',
+                subcategories: [
+                    { id: 'child1', name: 'Food Aid for Starving & Malnourished Children' },
+                    { id: 'child2', name: 'Vaccination & Disease Treatment' },
+                    { id: 'child3', name: 'Educational Opportunities & School Construction' },
+                    { id: 'child4', name: 'Child Trafficking Prevention & Rescue' },
+                    { id: 'child5', name: 'Orphanage & Childcare Facility Support' }
+                ]
+            },
+            {
+                id: 'war',
+                name: 'War Victims Relief',
+                icon: '🕊️',
+                subcategories: [
+                    { id: 'war1', name: 'Refugee Camp Food & Supply Support' },
+                    { id: 'war2', name: 'War-Injured Medical Treatment' },
+                    { id: 'war3', name: 'Destroyed Housing Reconstruction' },
+                    { id: 'war4', name: 'War Trauma Psychological Treatment' },
+                    { id: 'war5', name: 'Landmine Removal & Safe Zone Establishment' }
+                ]
+            },
+            {
+                id: 'animals',
+                name: 'Animal Protection',
+                icon: '🐾',
+                subcategories: [
+                    { id: 'animal1', name: 'Endangered Animal Protection (Tigers, Elephants)' },
+                    { id: 'animal2', name: 'Stray Animal Rescue & Adoption Centers' },
+                    { id: 'animal3', name: 'Habitat Destruction Prevention & Restoration' },
+                    { id: 'animal4', name: 'Poaching & Illegal Trade Enforcement' },
+                    { id: 'animal5', name: 'Marine Life Protection (Whales, Turtles)' }
+                ]
+            },
+            {
+                id: 'medical',
+                name: 'Medical Support',
+                icon: '🏥',
+                subcategories: [
+                    { id: 'medical1', name: 'Cancer Patient Treatment Cost Support' },
+                    { id: 'medical2', name: 'Rare Disease Patient Medication Support' },
+                    { id: 'medical3', name: 'Developing Country Medical Facility Construction' },
+                    { id: 'medical4', name: 'Epidemic Prevention & Vaccine Distribution' },
+                    { id: 'medical5', name: 'Disability Rehabilitation Treatment Support' }
+                ]
+            },
+            {
+                id: 'education',
+                name: 'Education Support',
+                icon: '📚',
+                subcategories: [
+                    { id: 'edu1', name: 'Developing Country School Construction' },
+                    { id: 'edu2', name: 'Scholarships & Tuition Support' },
+                    { id: 'edu3', name: 'Textbooks & School Supplies Provision' },
+                    { id: 'edu4', name: 'Teacher Training Programs' },
+                    { id: 'edu5', name: 'Online Education Infrastructure Development' }
+                ]
+            }
+        ];
+
+        let donationMode = null;
+        let selectedItems = [];
+        let musicPlaying = false;
+
+        const SEASON_PRICES = {
+            1: 0.0060,
+            2: 0.0069,
+            3: 0.0079,
+            4: 0.0091
+        };
+
+        const CURRENT_SEASON = 1;
+
+        window.addEventListener('DOMContentLoaded', function() {
+            renderCategories();
+        });
+
+        function renderCategories() {
+            const container = document.getElementById('categoriesSection');
+            const html = `
+                <div class="category-grid">
+                    ${categories.map(cat => `
+                        <div class="category-card">
+                            <div class="category-header">
+                                <div>
+                                    <div class="category-icon">${cat.icon}</div>
+                                    <h3 style="font-size: 24px; font-weight: 700; margin: 12px 0; color: #fff;">${cat.name}</h3>
+                                </div>
+                            </div>
+                            <div class="subcategory-list">
+                                ${cat.subcategories.map(sub => `
+                                    <div class="subcategory-item" data-id="${sub.id}" onclick="toggleSubcategory('${sub.id}')">
+                                        <div class="custom-radio"></div>
+                                        <span style="flex: 1; font-size: 15px; color: rgba(255,255,255,0.9);">${sub.name}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function setDonationMode(mode) {
+            donationMode = mode;
+            selectedItems = [];
+            
+            document.getElementById('mode-equal').querySelector('.custom-radio').classList.remove('selected');
+            document.getElementById('mode-ranked').querySelector('.custom-radio').classList.remove('selected');
+            document.getElementById('mode-' + mode).querySelector('.custom-radio').classList.add('selected');
+            
+            document.getElementById('mode-equal').style.borderColor = mode === 'equal' ? 'var(--primary)' : 'rgba(255, 107, 53, 0.3)';
+            document.getElementById('mode-ranked').style.borderColor = mode === 'ranked' ? 'var(--primary)' : 'rgba(255, 107, 53, 0.3)';
+            
+            document.querySelectorAll('.subcategory-item').forEach(item => {
+                item.classList.remove('selected');
+                item.querySelector('.custom-radio').classList.remove('selected');
+            });
+            
+            updateSelectionDisplay();
+        }
+
+        function toggleSubcategory(id) {
+            if (!donationMode) {
+                showToast('error', 'Please select donation method first!');
+                return;
+            }
+
+            const item = document.querySelector(`[data-id="${id}"]`);
+            const index = selectedItems.indexOf(id);
+
+            if (index > -1) {
+                selectedItems.splice(index, 1);
+                item.classList.remove('selected');
+                item.querySelector('.custom-radio').classList.remove('selected');
+            } else {
+                selectedItems.push(id);
+                item.classList.add('selected');
+                item.querySelector('.custom-radio').classList.add('selected');
+            }
+
+            updateSelectionDisplay();
+        }
+
+        function resetSelection() {
+            selectedItems = [];
+            donationMode = null;
+            
+            document.getElementById('mode-equal').querySelector('.custom-radio').classList.remove('selected');
+            document.getElementById('mode-ranked').querySelector('.custom-radio').classList.remove('selected');
+            document.getElementById('mode-equal').style.borderColor = 'rgba(255, 107, 53, 0.3)';
+            document.getElementById('mode-ranked').style.borderColor = 'rgba(255, 107, 53, 0.3)';
+            
+            document.querySelectorAll('.subcategory-item').forEach(item => {
+                item.classList.remove('selected');
+                item.querySelector('.custom-radio').classList.remove('selected');
+            });
+            
+            updateSelectionDisplay();
+            showToast('success', 'Reset Complete!', 'Please select again');
+        }
+
+        function updateSelectionDisplay() {
+            const container = document.getElementById('selectionList');
+            const resetBtn = document.getElementById('resetBtn');
+
+            if (selectedItems.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.5); font-size: 20px; padding: 40px 0;">Please select donation method and categories</p>';
+                resetBtn.style.display = 'none';
+                return;
+            }
+
+            resetBtn.style.display = 'inline-block';
+
+            if (donationMode === 'equal') {
+                const percentage = (100 / selectedItems.length).toFixed(1);
+                const html = selectedItems.map((id, index) => {
+                    const name = getItemName(id);
+                    return `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: rgba(78, 205, 196, 0.15); border: 1px solid rgba(78, 205, 196, 0.3); border-radius: 15px; margin-bottom: 15px;">
+                            <div style="display: flex; align-items: center; gap: 20px;">
+                                <div style="font-size: 28px;">${getCategoryIcon(id)}</div>
+                                <span style="font-weight: 600; font-size: 17px; color: #fff;">${name}</span>
+                            </div>
+                            <div class="percentage-badge">${percentage}%</div>
+                        </div>
+                    `;
+                }).join('');
+                container.innerHTML = html;
+
+            } else if (donationMode === 'ranked') {
+                const n = selectedItems.length;
+                const html = selectedItems.map((id, index) => {
+                    const rank = index + 1;
+                    const weight = (n - rank + 1);
+                    const sum = (n * (n + 1)) / 2;
+                    const percentage = ((weight / sum) * 100).toFixed(1);
+                    const name = getItemName(id);
+                    
+                    return `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: rgba(255, 107, 53, 0.15); border: 1px solid rgba(255, 107, 53, 0.3); border-radius: 15px; margin-bottom: 15px;">
+                            <div style="display: flex; align-items: center; gap: 20px;">
+                                <div class="rank-badge">${rank}</div>
+                                <div style="font-size: 28px;">${getCategoryIcon(id)}</div>
+                                <span style="font-weight: 600; font-size: 17px; color: #fff;">${name}</span>
+                            </div>
+                            <div class="percentage-badge">${percentage}%</div>
+                        </div>
+                    `;
+                }).join('');
+                container.innerHTML = html;
+            }
+        }
+
+        function getItemName(id) {
+            for (let cat of categories) {
+                const sub = cat.subcategories.find(s => s.id === id);
+                if (sub) return sub.name;
+            }
+            return '';
+        }
+
+        function getCategoryIcon(id) {
+            for (let cat of categories) {
+                const sub = cat.subcategories.find(s => s.id === id);
+                if (sub) return cat.icon;
+            }
+            return '📌';
+        }
+
+        function showSection(name) {
+            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('section-' + name).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicToggle');
+            if (musicPlaying) {
+                music.pause();
+                btn.innerHTML = '🎵 Play DONY Main Theme Song';
+                musicPlaying = false;
+            } else {
+                music.play().then(() => {
+                    btn.innerHTML = '🔇 Music Pause';
+                    musicPlaying = true;
+                }).catch(err => {
+                    console.error('Music play failed:', err);
+                    showToast('error', 'Music file not found', 'Please place the_earth__Add_Vocal___Cover_.mp3 in same folder');
+                });
+            }
+        }
+
+        let timeLeft = { days: 15, hours: 7, minutes: 32, seconds: 45 };
+        setInterval(() => {
+            if (timeLeft.seconds > 0) timeLeft.seconds--;
+            else if (timeLeft.minutes > 0) { timeLeft.minutes--; timeLeft.seconds = 59; }
+            else if (timeLeft.hours > 0) { timeLeft.hours--; timeLeft.minutes = 59; timeLeft.seconds = 59; }
+            else if (timeLeft.days > 0) { timeLeft.days--; timeLeft.hours = 23; timeLeft.minutes = 59; timeLeft.seconds = 59; }
+            
+            document.getElementById('days').textContent = String(timeLeft.days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(timeLeft.hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(timeLeft.minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(timeLeft.seconds).padStart(2, '0');
+        }, 1000);
+
+        function calculateTokens() {
+            const amount = parseFloat(document.getElementById('buyAmount').value) || 0;
+            const price = SEASON_PRICES[CURRENT_SEASON];
+            const tokens = amount / price;
+            const charity = amount * 0.3;
+            const burn = tokens * 0.1;
+            
+            document.getElementById('tokenAmount').textContent = tokens.toLocaleString(undefined, {maximumFractionDigits: 2}) + ' DONY';
+            document.getElementById('charityAmount').textContent = '$' + charity.toLocaleString(undefined, {maximumFractionDigits: 2});
+            document.getElementById('burnAmount').textContent = burn.toLocaleString(undefined, {maximumFractionDigits: 2}) + ' DONY';
+        }
+
+        function connectWallet() {
+            const amount = parseFloat(document.getElementById('buyAmount').value);
+            if (!amount || amount <= 0) {
+                showToast('error', 'Please enter purchase amount!');
+                return;
+            }
+            if (amount > 20000) {
+                showToast('error', 'Personal maximum is $20,000!');
+                return;
+            }
+            if (selectedItems.length === 0) {
+                showToast('error', 'Please select donation categories!');
+                return;
+            }
+            document.getElementById('walletModal').classList.add('active');
+        }
+
+        function closeWalletModal() {
+            document.getElementById('walletModal').classList.remove('active');
+        }
+
+        async function selectWallet(type) {
+            closeWalletModal();
+            
+            if (type === 'metamask') {
+                if (typeof window.ethereum === 'undefined') {
+                    showToast('error', 'MetaMask not installed!', 'Please install from https://metamask.io');
+                    return;
+                }
+                
+                try {
+                    showToast('info', 'Connecting wallet...', 'Check MetaMask');
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    
+                    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                    if (chainId !== '0x38') {
+                        await window.ethereum.request({
+                            method: 'wallet_switchEthereumChain',
+                            params: [{ chainId: '0x38' }],
+                        });
+                    }
+                    
+                    showToast('success', 'Connected!', accounts[0].slice(0, 6) + '...' + accounts[0].slice(-4));
+                    setTimeout(() => {
+                        completePurchase(accounts[0]);
+                    }, 1000);
+                } catch (error) {
+                    if (error.code === 4902) {
+                        showToast('error', 'Network Error', 'Please add BSC Network');
+                    } else {
+                        showToast('error', 'Connection Failed', error.message);
+                    }
+                }
+            } else if (type === 'trust') {
+                showToast('info', 'Trust Wallet', 'Please use WalletConnect');
+            } else {
+                showToast('info', 'WalletConnect', 'Coming soon');
+            }
+        }
+
+        function completePurchase(address) {
+            const amount = parseFloat(document.getElementById('buyAmount').value);
+            const price = SEASON_PRICES[CURRENT_SEASON];
+            const tokens = (amount / price).toFixed(2);
+            
+            showToast('success', 'Purchase Complete! 🎉', `You received ${tokens.toLocaleString()} DONY!`);
+            
+            document.getElementById('buyAmount').value = '';
+            calculateTokens();
+        }
+
+        function showToast(type, title, message = '') {
+            const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div style="font-size: 36px;">${icons[type]}</div>
+                <div>
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 5px;">${title}</div>
+                    ${message ? `<div style="font-size: 14px; opacity: 0.9;">${message}</div>` : ''}
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function openTransparencyModal() {
+            document.getElementById('transparencyModal').classList.add('active');
+        }
+
+        function closeTransparencyModal() {
+            document.getElementById('transparencyModal').classList.remove('active');
+        }
+
+        function copyAddress(address) {
+            navigator.clipboard.writeText(address).then(() => {
+                showToast('success', 'Copied!', address.slice(0, 10) + '...' + address.slice(-8));
+            });
+        }
+
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+        
+        function toggleMobileMenu() {
+            const dashboard = document.querySelector('.dashboard');
+            const btn = document.getElementById('mobileMenuBtn');
+            
+            if (dashboard.classList.contains('mobile-open')) {
+                dashboard.classList.remove('mobile-open');
+                btn.textContent = 'Dashboard';
+            } else {
+                dashboard.classList.add('mobile-open');
+                btn.textContent = 'Hide';
+            }
+        }
+    </script>
+</body>
+</html>
