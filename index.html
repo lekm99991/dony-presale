@@ -9,18 +9,18 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #FF8C69;
-            --secondary: #FFB347;
-            --charity: #7ED8D3;
-            --success: #81C784;
-            --error: #EF9A9A;
+            --primary: #FF6B9D;
+            --secondary: #FFA07A;
+            --charity: #20B2AA;
+            --success: #3CB371;
+            --error: #FF6B6B;
             --dark: #2C3E50;
-            --light-bg: #F8F9FA;
-            --card-bg: #FFFFFF;
+            --light-bg: #FFF8F3;
+            --cream: #FFFBF5;
         }
         body {
             font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #E8F5E9 0%, #FFF3E0 50%, #E1F5FE 100%);
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFE8D6 50%, #E0F2F1 100%);
             overflow-x: hidden;
             color: #2C3E50;
         }
@@ -28,9 +28,9 @@
         
         .dashboard {
             width: 280px;
-            background: rgba(255, 255, 255, 0.98);
-            border-right: 2px solid rgba(126, 216, 211, 0.3);
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(180deg, #FFFBF5 0%, #FFF5EB 100%);
+            border-right: 3px solid rgba(255, 107, 157, 0.15);
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.08);
             position: fixed;
             left: 0;
             top: 0;
@@ -42,10 +42,10 @@
         .content-area { margin-left: 280px; flex: 1; }
         
         .top-nav {
-            background: rgba(255, 255, 255, 0.98);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            border-bottom: 2px solid rgba(126, 216, 211, 0.2);
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border-bottom: 2px solid rgba(255, 107, 157, 0.12);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
             padding: 20px 40px;
             display: flex;
             justify-content: space-between;
@@ -58,17 +58,21 @@
         .nav-tab {
             padding: 12px 24px;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 600;
             transition: all 0.3s;
             border: 2px solid transparent;
-            color: rgba(44, 62, 80, 0.7);
+            color: #5A6C7D;
         }
-        .nav-tab:hover { color: var(--dark); background: rgba(126, 216, 211, 0.1); }
+        .nav-tab:hover { 
+            color: var(--primary); 
+            background: rgba(255, 107, 157, 0.08);
+            transform: translateY(-2px);
+        }
         .nav-tab.active {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            box-shadow: 0 4px 20px rgba(255, 140, 105, 0.4);
+            box-shadow: 0 6px 25px rgba(255, 107, 157, 0.35);
         }
         
         .section-content { display: none; padding: 0; min-height: 100vh; }
@@ -83,8 +87,8 @@
             50% { transform: translateY(-30px); }
         }
         @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(126, 216, 211, 0.4); }
-            50% { box-shadow: 0 0 40px rgba(126, 216, 211, 0.6); }
+            0%, 100% { box-shadow: 0 0 25px rgba(255, 107, 157, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 107, 157, 0.4); }
         }
         
         .hero-section {
@@ -103,7 +107,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(126, 216, 211, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle at 50% 50%, rgba(255, 107, 157, 0.08) 0%, transparent 70%);
         }
         
         .image-gallery {
@@ -123,7 +127,7 @@
         }
         .gallery-item:hover {
             transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 30px 60px rgba(255, 140, 105, 0.35);
+            box-shadow: 0 30px 60px rgba(255, 107, 157, 0.3);
         }
         .gallery-item img {
             width: 100%;
@@ -171,7 +175,7 @@
         .modal-overlay.active { display: flex; }
         .modal-content {
             background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0a 100%);
-            border: 1px solid rgba(255, 140, 105, 0.3);
+            border: 1px solid rgba(32, 178, 170, 0.25);
             border-radius: 30px;
             padding: 50px;
             max-width: 1200px;
@@ -218,9 +222,9 @@
             min-width: 320px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .toast.success { background: linear-gradient(135deg, #81C784, #27ae60); }
-        .toast.error { background: linear-gradient(135deg, #EF9A9A, #c0392b); }
-        .toast.info { background: linear-gradient(135deg, #81C784, #2980b9); }
+        .toast.success { background: linear-gradient(135deg, #3CB371, #27ae60); }
+        .toast.error { background: linear-gradient(135deg, #FF6B6B, #c0392b); }
+        .toast.info { background: linear-gradient(135deg, #3CB371, #2980b9); }
         @keyframes slideInRight {
             from { transform: translateX(500px); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -239,7 +243,7 @@
             border: none;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 8px 25px rgba(255, 140, 105, 0.35);
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.3);
             font-size: 18px;
             position: relative;
             overflow: hidden;
@@ -289,15 +293,15 @@
             margin: 50px 0;
         }
         .category-card {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(126, 216, 211, 0.3);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 107, 53, 0.2);
             border-radius: 20px;
             padding: 35px;
             transition: all 0.4s;
         }
         .category-card:hover {
             border-color: var(--primary);
-            box-shadow: 0 15px 40px rgba(255, 140, 105, 0.3);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.3);
             transform: translateY(-5px);
         }
         .category-header {
@@ -330,7 +334,7 @@
             transform: translateX(8px);
         }
         .subcategory-item.selected {
-            background: rgba(126, 216, 211, 0.2);
+            background: rgba(32, 178, 170, 0.12);
             border-color: var(--charity);
         }
         .custom-radio {
@@ -368,17 +372,17 @@
             font-weight: 700;
             font-size: 16px;
             flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(255, 140, 105, 0.35);
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
         }
         .percentage-badge {
-            background: linear-gradient(135deg, var(--charity), #69C8BE);
+            background: linear-gradient(135deg, var(--charity), #48D1CC);
             color: white;
             padding: 6px 16px;
             border-radius: 15px;
             font-size: 15px;
             font-weight: 700;
             margin-left: auto;
-            box-shadow: 0 4px 15px rgba(126, 216, 211, 0.3);
+            box-shadow: 0 4px 15px rgba(32, 178, 170, 0.3);
         }
         
         .input-group {
@@ -393,11 +397,11 @@
         .input-group input {
             width: 100%;
             padding: 18px;
-            border: 2px solid rgba(255, 140, 105, 0.3);
+            border: 2px solid rgba(255, 107, 53, 0.3);
             border-radius: 12px;
             font-size: 16px;
             transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(26, 26, 46, 0.5);
             color: white;
         }
         .input-group input:focus {
@@ -413,8 +417,8 @@
             margin: 50px 0;
         }
         .season-card {
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid rgba(126, 216, 211, 0.3);
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 107, 157, 0.2);
             border-radius: 20px;
             padding: 35px;
             text-align: center;
@@ -424,17 +428,17 @@
             .season-card:hover {
                 border-color: var(--primary);
                 transform: translateY(-8px);
-                box-shadow: 0 20px 50px rgba(126, 216, 211, 0.3);
+                box-shadow: 0 20px 50px rgba(255, 107, 157, 0.3);
             }
         }
         .season-card:active {
             border-color: var(--primary);
             transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(126, 216, 211, 0.3);
+            box-shadow: 0 20px 50px rgba(255, 107, 157, 0.3);
         }
         .season-card.active {
             border-color: var(--charity);
-            background: rgba(126, 216, 211, 0.08);
+            background: rgba(32, 178, 170, 0.08);
             animation: glow 2s infinite;
         }
         .season-badge {
@@ -455,8 +459,8 @@
             margin: 40px 0;
         }
         .wallet-option {
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid rgba(126, 216, 211, 0.3);
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 107, 157, 0.2);
             border-radius: 20px;
             padding: 40px;
             text-align: center;
@@ -668,45 +672,45 @@
             <div style="margin-bottom: 30px;">
                 <h3 style="font-size: 15px; margin-bottom: 15px; text-align: center; font-weight: 700; color: rgba(255,255,255,0.9);">⏰ Season Ends In</h3>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                    <div style="background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 140, 105, 0.3); padding: 18px; border-radius: 12px; text-align: center;">
+                    <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(32, 178, 170, 0.25); padding: 18px; border-radius: 12px; text-align: center;">
                         <div style="font-size: 30px; font-weight: 700; color: var(--primary);" id="days">15</div>
                         <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Days</div>
                     </div>
-                    <div style="background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 140, 105, 0.3); padding: 18px; border-radius: 12px; text-align: center;">
+                    <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(32, 178, 170, 0.25); padding: 18px; border-radius: 12px; text-align: center;">
                         <div style="font-size: 30px; font-weight: 700; color: var(--primary);" id="hours">07</div>
                         <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Hours</div>
                     </div>
-                    <div style="background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 140, 105, 0.3); padding: 18px; border-radius: 12px; text-align: center;">
+                    <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(32, 178, 170, 0.25); padding: 18px; border-radius: 12px; text-align: center;">
                         <div style="font-size: 30px; font-weight: 700; color: var(--primary);" id="minutes">32</div>
                         <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Mins</div>
                     </div>
-                    <div style="background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 140, 105, 0.3); padding: 18px; border-radius: 12px; text-align: center;">
+                    <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(32, 178, 170, 0.25); padding: 18px; border-radius: 12px; text-align: center;">
                         <div style="font-size: 30px; font-weight: 700; color: var(--primary);" id="seconds">45</div>
                         <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Secs</div>
                     </div>
                 </div>
             </div>
 
-            <div style="background: linear-gradient(135deg, rgba(255, 140, 105, 0.2), rgba(255, 179, 71, 0.2)); border: 1px solid rgba(255, 140, 105, 0.35); padding: 22px; border-radius: 15px; margin-bottom: 18px;">
+            <div style="background: linear-gradient(135deg, rgba(255, 107, 157, 0.12), rgba(255, 160, 122, 0.12)); border: 1px solid rgba(255, 107, 157, 0.3); padding: 22px; border-radius: 15px; margin-bottom: 18px;">
                 <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; font-weight: 600; text-align: left;">Total Raised</div>
                 <div style="font-size: 26px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-align: left;" id="totalRaised">$0</div>
             </div>
 
-            <div style="background: linear-gradient(135deg, rgba(126, 216, 211, 0.2), rgba(105, 200, 195, 0.2)); border: 1px solid rgba(126, 216, 211, 0.35); padding: 22px; border-radius: 15px; margin-bottom: 18px;">
+            <div style="background: linear-gradient(135deg, rgba(32, 178, 170, 0.12), rgba(72, 209, 204, 0.12)); border: 1px solid rgba(32, 178, 170, 0.3); padding: 22px; border-radius: 15px; margin-bottom: 18px;">
                 <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; font-weight: 600; text-align: left;">Total Donated</div>
                 <div style="font-size: 26px; font-weight: 700; color: var(--charity); text-align: left;" id="totalDonated">$0</div>
             </div>
 
-            <div style="background: linear-gradient(135deg, rgba(239, 154, 154, 0.2), rgba(229, 115, 115, 0.2)); border: 1px solid rgba(239, 154, 154, 0.35); padding: 22px; border-radius: 15px; margin-bottom: 18px;">
+            <div style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.12), rgba(255, 138, 128, 0.12)); border: 1px solid rgba(255, 107, 107, 0.3); padding: 22px; border-radius: 15px; margin-bottom: 18px;">
                 <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; font-weight: 600; text-align: left;">Total Burned</div>
-                <div style="font-size: 26px; font-weight: 700; color: #EF9A9A; text-align: left;" id="totalBurned">0 DONY</div>
+                <div style="font-size: 26px; font-weight: 700; color: #FF6B6B; text-align: left;" id="totalBurned">0 DONY</div>
             </div>
 
-            <div style="background: linear-gradient(135deg, rgba(129, 199, 132, 0.2), rgba(144, 202, 249, 0.2)); border: 1px solid rgba(129, 199, 132, 0.35); padding: 22px; border-radius: 15px;">
+            <div style="background: linear-gradient(135deg, rgba(60, 179, 113, 0.12), rgba(102, 205, 170, 0.12)); border: 1px solid rgba(60, 179, 113, 0.3); padding: 22px; border-radius: 15px;">
                 <div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; font-weight: 600; text-align: left;">Progress</div>
-                <div style="font-size: 26px; font-weight: 700; color: #81C784; margin-bottom: 12px; text-align: left;" id="progressPercent">0%</div>
+                <div style="font-size: 26px; font-weight: 700; color: #3CB371; margin-bottom: 12px; text-align: left;" id="progressPercent">0%</div>
                 <div style="height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;">
-                    <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #81C784, #2980b9); border-radius: 5px; box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);"></div>
+                    <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #3CB371, #2980b9); border-radius: 5px; box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);"></div>
                 </div>
             </div>
         </aside>
@@ -720,7 +724,7 @@
                     <div class="nav-tab" onclick="showSection('donation')">Donation</div>
                     <div class="nav-tab" onclick="showSection('presale')">Presale</div>
                 </div>
-                <button style="background: linear-gradient(135deg, var(--charity), #69C8BE); color: white; padding: 12px 24px; border-radius: 25px; border: none; cursor: pointer; font-weight: 600; box-shadow: 0 4px 15px rgba(126, 216, 211, 0.3); font-family: 'Outfit', sans-serif; position: relative; z-index: 9999; pointer-events: auto; touch-action: manipulation;" id="musicToggle">🎵 Play DONY Main Theme Song</button>
+                <button style="background: linear-gradient(135deg, var(--charity), #48D1CC); color: white; padding: 12px 24px; border-radius: 25px; border: none; cursor: pointer; font-weight: 600; box-shadow: 0 4px 15px rgba(32, 178, 170, 0.3); font-family: 'Outfit', sans-serif;" id="musicToggle">🎵 Play DONY Main Theme Song</button>
             </nav>
 
             <!-- About DONY Section -->
@@ -728,7 +732,7 @@
                 <div class="hero-section">
                     <div style="text-align: center; z-index: 1; max-width: 1000px; padding: 0 40px;">
                         <div style="display: inline-block; animation: float 4s ease-in-out infinite;">
-                            <div style="width: 220px; height: 220px; background: linear-gradient(135deg, #FF8C69, #7ED8D3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 110px; box-shadow: 0 30px 80px rgba(126, 216, 211, 0.4); margin: 0 auto;">🌍💙</div>
+                            <div style="width: 220px; height: 220px; background: linear-gradient(135deg, #FF6B9D, #20B2AA); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 110px; box-shadow: 0 30px 80px rgba(255, 107, 53, 0.6); margin: 0 auto;">🌍💙</div>
                         </div>
                         <h1 style="font-size: 64px; font-weight: 800; margin: 40px 0 25px; background: linear-gradient(135deg, #fff, rgba(255,255,255,0.7)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2;">We Must Save the Earth</h1>
                         <p style="font-size: 24px; color: rgba(255,255,255,0.8); line-height: 1.8; margin-bottom: 30px;">It's late, but we must start now.<br>Tomorrow might be too late.</p>
@@ -777,7 +781,7 @@
                     </div>
                 </div>
 
-                <div style="max-width: 1000px; margin: 80px auto; padding: 60px 40px; background: linear-gradient(135deg, rgba(126, 216, 211, 0.08), rgba(126, 216, 211, 0.08)); border: 1px solid rgba(255, 140, 105, 0.3); border-radius: 30px; text-align: center;">
+                <div style="max-width: 1000px; margin: 80px auto; padding: 60px 40px; background: linear-gradient(135deg, rgba(255, 107, 157, 0.08), rgba(32, 178, 170, 0.08)); border: 1px solid rgba(32, 178, 170, 0.25); border-radius: 30px; text-align: center;">
                     <h2 style="font-size: 42px; font-weight: 800; margin-bottom: 25px; color: #2C3E50;">Time Is Running Out</h2>
                     <p style="font-size: 20px; color: rgba(255,255,255,0.85); line-height: 2; max-width: 800px; margin: 0 auto;">
                         DONY is not just a cryptocurrency.<br>
@@ -792,7 +796,7 @@
             <section id="section-vision" class="section-content">
                 <div style="max-width: 1200px; margin: 0 auto; padding: 80px 40px; text-align: center;">
                     <h1 style="font-size: 56px; font-weight: 800; margin-bottom: 40px; color: white;">🎯 Our Vision</h1>
-                    <div style="background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 140, 105, 0.3); padding: 80px; border-radius: 25px;">
+                    <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(32, 178, 170, 0.25); padding: 80px; border-radius: 25px;">
                         <p style="font-size: 26px; color: rgba(255,255,255,0.8); line-height: 2;">Vision content will be added here.<br><br><strong style="color: var(--primary);">Let us know when ready!</strong></p>
                     </div>
                 </div>
@@ -809,15 +813,15 @@
                     </div>
 
                     <!-- Donation Method Selection -->
-                    <div style="background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 140, 105, 0.3); padding: 40px; border-radius: 25px; margin-bottom: 50px; text-align: center;">
+                    <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(32, 178, 170, 0.25); padding: 40px; border-radius: 25px; margin-bottom: 50px; text-align: center;">
                         <h3 style="font-size: 28px; font-weight: 700; margin-bottom: 30px; color: #2C3E50;">Choose Donation Method</h3>
                         <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
-                            <div onclick="setDonationMode('equal')" style="cursor: pointer; padding: 30px 50px; border: 3px solid rgba(255, 140, 105, 0.3); border-radius: 20px; transition: all 0.3s; background: rgba(248, 249, 250, 0.8);" id="mode-equal">
+                            <div onclick="setDonationMode('equal')" style="cursor: pointer; padding: 30px 50px; border: 3px solid rgba(255, 107, 53, 0.3); border-radius: 20px; transition: all 0.3s; background: rgba(255, 255, 255, 0.85);" id="mode-equal">
                                 <div class="custom-radio" style="margin: 0 auto 15px;"></div>
                                 <div style="font-weight: 700; font-size: 20px; color: #2C3E50;">Equal Distribution</div>
                                 <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 10px;">Distribute equally to all<br>selected categories</p>
                             </div>
-                            <div onclick="setDonationMode('ranked')" style="cursor: pointer; padding: 30px 50px; border: 3px solid rgba(255, 140, 105, 0.3); border-radius: 20px; transition: all 0.3s; background: rgba(248, 249, 250, 0.8);" id="mode-ranked">
+                            <div onclick="setDonationMode('ranked')" style="cursor: pointer; padding: 30px 50px; border: 3px solid rgba(255, 107, 53, 0.3); border-radius: 20px; transition: all 0.3s; background: rgba(255, 255, 255, 0.85);" id="mode-ranked">
                                 <div class="custom-radio" style="margin: 0 auto 15px;"></div>
                                 <div style="font-weight: 700; font-size: 20px; color: #2C3E50;">Weighted Priority</div>
                                 <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-top: 10px;">Distribute based on<br>selection order</p>
@@ -830,16 +834,16 @@
                     <div id="categoriesSection"></div>
 
                     <!-- Selection Display -->
-                    <div style="background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 140, 105, 0.3); padding: 50px; border-radius: 25px; margin-top: 50px;">
+                    <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(32, 178, 170, 0.25); padding: 50px; border-radius: 25px; margin-top: 50px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
                             <h3 style="font-size: 32px; font-weight: 700; color: #2C3E50;">
                                 <svg style="width: 28px; height: 28px; display: inline-block; vertical-align: middle; margin-right: 8px;" viewBox="0 0 24 24" fill="none">
-                                    <path d="M3 3v18h18" stroke="#FF8C69" stroke-width="2" stroke-linecap="round"/>
-                                    <path d="M7 14l4-4 4 4 6-6" stroke="#7ED8D3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <circle cx="7" cy="14" r="1.5" fill="#7ED8D3"/>
-                                    <circle cx="11" cy="10" r="1.5" fill="#7ED8D3"/>
-                                    <circle cx="15" cy="14" r="1.5" fill="#7ED8D3"/>
-                                    <circle cx="21" cy="8" r="1.5" fill="#7ED8D3"/>
+                                    <path d="M3 3v18h18" stroke="#FF6B9D" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M7 14l4-4 4 4 6-6" stroke="#20B2AA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="7" cy="14" r="1.5" fill="#20B2AA"/>
+                                    <circle cx="11" cy="10" r="1.5" fill="#20B2AA"/>
+                                    <circle cx="15" cy="14" r="1.5" fill="#20B2AA"/>
+                                    <circle cx="21" cy="8" r="1.5" fill="#20B2AA"/>
                                 </svg>
                                 Selected Donation Items
                             </h3>
@@ -879,28 +883,28 @@
                             <div style="font-size: 16px; color: var(--primary); font-weight: 700; margin-bottom: 20px;">Courage</div>
                             <div style="font-size: 38px; font-weight: 700; color: #2C3E50; margin-bottom: 12px;">$0.0069</div>
                             <p style="font-size: 14px; color: rgba(255,255,255,0.6);">75M DONY</p>
-                            <div style="background: #81C784; color: white; padding: 6px 16px; border-radius: 15px; font-size: 13px; display: inline-block; margin-top: 15px; font-weight: 700;">+15% Up</div>
+                            <div style="background: #3CB371; color: white; padding: 6px 16px; border-radius: 15px; font-size: 13px; display: inline-block; margin-top: 15px; font-weight: 700;">+15% Up</div>
                         </div>
                         <div class="season-card">
                             <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #2C3E50;">Season 3</h3>
                             <div style="font-size: 16px; color: var(--secondary); font-weight: 700; margin-bottom: 20px;">Challenge</div>
                             <div style="font-size: 38px; font-weight: 700; color: #2C3E50; margin-bottom: 12px;">$0.0079</div>
                             <p style="font-size: 14px; color: rgba(255,255,255,0.6);">75M DONY</p>
-                            <div style="background: #81C784; color: white; padding: 6px 16px; border-radius: 15px; font-size: 13px; display: inline-block; margin-top: 15px; font-weight: 700;">+15% Up</div>
+                            <div style="background: #3CB371; color: white; padding: 6px 16px; border-radius: 15px; font-size: 13px; display: inline-block; margin-top: 15px; font-weight: 700;">+15% Up</div>
                         </div>
                         <div class="season-card">
                             <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #2C3E50;">Season 4</h3>
-                            <div style="font-size: 16px; color: #EF9A9A; font-weight: 700; margin-bottom: 20px;">Wave</div>
+                            <div style="font-size: 16px; color: #FF6B6B; font-weight: 700; margin-bottom: 20px;">Wave</div>
                             <div style="font-size: 38px; font-weight: 700; color: #2C3E50; margin-bottom: 12px;">$0.0091</div>
                             <p style="font-size: 14px; color: rgba(255,255,255,0.6);">75M DONY</p>
-                            <div style="background: #81C784; color: white; padding: 6px 16px; border-radius: 15px; font-size: 13px; display: inline-block; margin-top: 15px; font-weight: 700;">+15% Up</div>
+                            <div style="background: #3CB371; color: white; padding: 6px 16px; border-radius: 15px; font-size: 13px; display: inline-block; margin-top: 15px; font-weight: 700;">+15% Up</div>
                         </div>
                     </div>
 
-                    <div style="background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 140, 105, 0.3); border-radius: 25px; padding: 50px; margin-top: 50px;">
+                    <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(32, 178, 170, 0.25); border-radius: 25px; padding: 50px; margin-top: 50px;">
                         <h3 style="font-size: 32px; font-weight: 700; margin-bottom: 40px; text-align: center; color: #2C3E50;">
                             <svg style="width: 32px; height: 32px; display: inline-block; vertical-align: middle; margin-right: 10px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="#7ED8D3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="#20B2AA" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                             Purchase DONY
                         </h3>
@@ -910,7 +914,7 @@
                             <input type="number" id="buyAmount" placeholder="e.g., 1000" oninput="calculateTokens()">
                         </div>
 
-                        <div style="background: rgba(78, 205, 196, 0.15); border: 1px solid rgba(126, 216, 211, 0.3); padding: 30px; border-radius: 20px; margin-bottom: 30px;">
+                        <div style="background: rgba(78, 205, 196, 0.15); border: 1px solid rgba(78, 205, 196, 0.3); padding: 30px; border-radius: 20px; margin-bottom: 30px;">
                             <div style="display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 18px;">
                                 <span style="color: rgba(255,255,255,0.8);">Tokens Received</span>
                                 <strong id="tokenAmount" style="font-size: 24px; color: var(--charity);">0 DONY</strong>
@@ -919,11 +923,11 @@
                                 <span style="color: rgba(255,255,255,0.8);">Current Price</span>
                                 <strong style="color: #2C3E50;">$0.0060</strong>
                             </div>
-                            <div style="display: flex; justify-content: space-between; color: #81C784; margin-bottom: 18px; font-size: 18px;">
+                            <div style="display: flex; justify-content: space-between; color: #3CB371; margin-bottom: 18px; font-size: 18px;">
                                 <span>❤️ Charity Donation (30%)</span>
                                 <strong id="charityAmount">$0</strong>
                             </div>
-                            <div style="display: flex; justify-content: space-between; color: #EF9A9A; font-size: 18px;">
+                            <div style="display: flex; justify-content: space-between; color: #FF6B6B; font-size: 18px;">
                                 <span>🔥 Auto Burn (10%)</span>
                                 <strong id="burnAmount">0 DONY</strong>
                             </div>
@@ -1016,7 +1020,7 @@
 
                 <!-- War/Refugees (3개) -->
                 <div style="margin-bottom: 40px;">
-                    <h4 style="font-size: 22px; margin-bottom: 20px; color: #EF9A9A; font-weight: 700;">🕊️ War & Refugee Relief</h4>
+                    <h4 style="font-size: 22px; margin-bottom: 20px; color: #FF6B6B; font-weight: 700;">🕊️ War & Refugee Relief</h4>
                     
                     <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
                         <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Red Cross / Red Crescent</h5>
@@ -1056,7 +1060,7 @@
 
                 <!-- Medical (2개) -->
                 <div style="margin-bottom: 40px;">
-                    <h4 style="font-size: 22px; margin-bottom: 20px; color: #81C784; font-weight: 700;">🏥 Medical Support</h4>
+                    <h4 style="font-size: 22px; margin-bottom: 20px; color: #3CB371; font-weight: 700;">🏥 Medical Support</h4>
                     
                     <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
                         <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">WHO (World Health Organization)</h5>
@@ -1073,7 +1077,7 @@
 
                 <!-- Education (2개) -->
                 <div style="margin-bottom: 40px;">
-                    <h4 style="font-size: 22px; margin-bottom: 20px; color: #81C784; font-weight: 700;">📚 Education Support</h4>
+                    <h4 style="font-size: 22px; margin-bottom: 20px; color: #3CB371; font-weight: 700;">📚 Education Support</h4>
                     
                     <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 20px; margin: 15px 0; border: 1px solid rgba(255,255,255,0.2);">
                         <h5 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">Room to Read</h5>
@@ -1190,17 +1194,25 @@
         window.addEventListener('DOMContentLoaded', function() {
             renderCategories();
             
-            // 음악 버튼 이벤트 리스너 추가
+            // 음악 버튼 이벤트 리스너
             const musicBtn = document.getElementById('musicToggle');
-            if (musicBtn) {
-                musicBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    toggleMusic();
+            const music = document.getElementById('bgMusic');
+            
+            if (musicBtn && music) {
+                musicBtn.addEventListener('click', function() {
+                    if (musicPlaying) {
+                        music.pause();
+                        musicBtn.innerHTML = '🎵 Play DONY Main Theme Song';
+                        musicPlaying = false;
+                    } else {
+                        music.play().then(() => {
+                            musicBtn.innerHTML = '🔇 Music Pause';
+                            musicPlaying = true;
+                        }).catch(err => {
+                            alert('음악 파일을 찾을 수 없습니다: ' + err.message);
+                        });
+                    }
                 });
-                console.log('Music button event listener attached!');
-            } else {
-                console.error('Music button not found!');
             }
         });
 
@@ -1239,8 +1251,8 @@
             document.getElementById('mode-ranked').querySelector('.custom-radio').classList.remove('selected');
             document.getElementById('mode-' + mode).querySelector('.custom-radio').classList.add('selected');
             
-            document.getElementById('mode-equal').style.borderColor = mode === 'equal' ? 'var(--primary)' : 'rgba(255, 140, 105, 0.3)';
-            document.getElementById('mode-ranked').style.borderColor = mode === 'ranked' ? 'var(--primary)' : 'rgba(255, 140, 105, 0.3)';
+            document.getElementById('mode-equal').style.borderColor = mode === 'equal' ? 'var(--primary)' : 'rgba(255, 107, 53, 0.3)';
+            document.getElementById('mode-ranked').style.borderColor = mode === 'ranked' ? 'var(--primary)' : 'rgba(255, 107, 53, 0.3)';
             
             document.querySelectorAll('.subcategory-item').forEach(item => {
                 item.classList.remove('selected');
@@ -1278,8 +1290,8 @@
             
             document.getElementById('mode-equal').querySelector('.custom-radio').classList.remove('selected');
             document.getElementById('mode-ranked').querySelector('.custom-radio').classList.remove('selected');
-            document.getElementById('mode-equal').style.borderColor = 'rgba(255, 140, 105, 0.3)';
-            document.getElementById('mode-ranked').style.borderColor = 'rgba(255, 140, 105, 0.3)';
+            document.getElementById('mode-equal').style.borderColor = 'rgba(255, 107, 53, 0.3)';
+            document.getElementById('mode-ranked').style.borderColor = 'rgba(255, 107, 53, 0.3)';
             
             document.querySelectorAll('.subcategory-item').forEach(item => {
                 item.classList.remove('selected');
@@ -1307,7 +1319,7 @@
                 const html = selectedItems.map((id, index) => {
                     const name = getItemName(id);
                     return `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: rgba(78, 205, 196, 0.15); border: 1px solid rgba(126, 216, 211, 0.3); border-radius: 15px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: rgba(78, 205, 196, 0.15); border: 1px solid rgba(78, 205, 196, 0.3); border-radius: 15px; margin-bottom: 15px;">
                             <div style="display: flex; align-items: center; gap: 20px;">
                                 <div style="font-size: 28px;">${getCategoryIcon(id)}</div>
                                 <span style="font-weight: 600; font-size: 17px; color: #2C3E50;">${name}</span>
@@ -1328,7 +1340,7 @@
                     const name = getItemName(id);
                     
                     return `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: rgba(255, 107, 53, 0.15); border: 1px solid rgba(255, 140, 105, 0.3); border-radius: 15px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: rgba(255, 107, 53, 0.15); border: 1px solid rgba(32, 178, 170, 0.25); border-radius: 15px; margin-bottom: 15px;">
                             <div style="display: flex; align-items: center; gap: 20px;">
                                 <div class="rank-badge">${rank}</div>
                                 <div style="font-size: 28px;">${getCategoryIcon(id)}</div>
